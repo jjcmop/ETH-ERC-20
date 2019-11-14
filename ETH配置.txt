@@ -1,0 +1,159 @@
+https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=0xe4412afb082b51b185acf2b421842465eac96103&address=0x18A7CC014aE45D6F48C9B0D2AB828EE03E460300&tag=latest&apikey=XYT
+
+
+
+https://bip49.com/?#english
+
+
+
+
+阿里镜像：composer config -g repo.packagist composer https://packagist.phpcomposer.com
+
+
+参考链接：https://blog.csdn.net/qq_35669659/article/details/80103973
+
+geth初始化
+xxx.json
+{
+	"config": {
+	        "chainId": 123456,
+	        "homesteadBlock": 0,
+	        "eip155Block": 0,
+	        "eip158Block": 0
+	},
+	"nonce": "0x0000000000000042",
+	"difficulty": "0x020000",
+	"mixhash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+	"coinbase": "0x0000000000000000000000000000000000000000",
+	"timestamp": "0x00",
+	"parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+	"extraData": "",
+	"gasLimit": "0x4c4b40",
+	"alloc": {}
+	}
+geth init xxx.json
+
+geth启动命令
+geth --rpcaddr 0.0.0.0  --datadir data --networkid 1 --rpcapi "db,eth,net,web3,personal" --rpccorsdomain "*" --cache=1024 --syncmode "full" console > eth.log
+
+geth 启动attach api控制台
+geth attach /go-ethereum-master/build/bin/data/geth.ipc 
+
+查看区块高度
+eth.blockNumber
+
+查看同步进度
+eth.syncing
+
+创建新账号
+personal.newAccount()
+或者 personal.newAccount("123456")
+
+查看节点信息
+admin.nodeInfo
+
+挖矿
+开始挖矿 miner.start(1)
+停止挖矿 miner.stop()
+
+查看当前矿工账号
+eth.coinbase 默认为第一个账户
+
+修改矿工账号
+miner.setEtherbase(eth.accounts[1])
+
+查看账户信息
+eth.accounts[0]
+
+查看账户余额
+eth.getBalance(eth.accounts[0])
+或者 web3.fromWei(eth.getBalance(eth.accounts[0]), "ether")
+
+解锁账号
+personal.unlockAccount(eth.accounts[0])
+使用账户资金前都需要先解锁账号
+
+转账eth.sendTransaction({from:eth.accounts[0],to:"0x587e57a516730381958f86703b1f8e970ff445d9",value:web3.toWei(3,"ether")})
+使用 txpool.status 可以看到交易状态
+
+查看区块数据
+eth.blockNumber
+eth.getTransaction("0x0c59f431068937cbe9e230483bc79f59bd7146edc8ff5ec37fea6710adcab825")
+eth.getBlock(1) 通过区块号查看区块
+
+
+linux安装钱包教程
+wget https://gethstore.blob.core.windows.net/builds/geth-linux-amd64-1.8.13-225171a4.tar.gz  //下载钱包
+tar -zxvf geth-linux-amd64-1.8.13-225171a4.tar.gz. //解压
+mv geth-linux-amd64-1.8.13-225171a4 /root/ 
+cd /root/
+screen -R geth 
+/root/geth-linux-amd64-1.8.13-225171a4/geth attach  //开启geth
+yum -y install telnet 
+telnet 172.31.25.166 21154
+setsid geth --rpc=true --rpcaddr 0.0.0.0 --rpcport 8545 --rpcapi eth,web3,personal --allow-insecure-unlock &将ETH启动命令放入后台执行
+
+linux安装钱包教程
+1、yum update
+2、wget https://gethstore.blob.core.windows.net/builds/geth-linux-amd64-1.9.6-bd059680.tar.gz
+3、tar -zxvf geth-linux-amd64-1.9.6-bd059680.tar.gz 
+4、cd geth-linux-amd64-1.9.6-bd059680/
+5、setsid ./geth >> ethToken.log 2>&1 &  （后台启动）
+6、./geth attach （进入控制台）
+
+Linux centos7安装RabbitMQ
+参考地址：https://www.jianshu.com/p/ee9f7594212b
+
+软件安装erlang（参考地址：http://erlang.org/download/）
+wget http://erlang.org/download/otp_src_21.1.tar.gz
+tar -zxvf otp_src_21.1.tar.gz
+cd otp_src_21.1/
+mkdir -p /usr/local/erlang
+yum install -y make gcc gcc-c++ m4 openssl openssl-devel ncurses-devel unixODBC unixODBC-devel java java-devel
+./configure --prefix=/usr/local/erlang
+make && make install
+
+
+写入PATH
+vim /etc/profile
+PATH=$PATH:/usr/local/erlang/bin
+source /etc/profile
+
+
+软件安装rabbitmq（参考地址：http://www.rabbitmq.com/which-erlang.html）
+1.创建账号
+rabbitmqctl add_user admin_hzl hzl500520
+2.设置用户角色
+rabbitmqctl set_user_tags admin_hzl administrator
+3.设置用户权限
+rabbitmqctl set_permissions -p "/" admin_hzl ".*" ".*" ".*"
+4.设置完成后可以查看当前用户和角色(需要开启服务)
+rabbitmqctl list_users
+
+
+安装软件haproxy
+make TARGET=linux440 ARCH=x86_64 PREFIX=/usr/local/haproxy
+make install PREFIX=/usr/local/haproxy
+vim /usr/local/haproxy/haproxy.cfg
+/usr/local/haproxy/sbin/haproxy -f /usr/local/haproxy/haproxy.cfg
+
+安装软件rabbitmq-c
+cd rabbitmq-c-0.5.0
+autoreconf -i
+./configure --prefix=/usr/local/rabbitmq-c
+make && make install
+
+安装软件amqp 
+/usr/local/php/bin/phpize
+./configure --with-php-config=/usr/local/php/bin/php-config --with-amqp --with-lib
+rabbitmq-dir=/usr/local/rabbitmq-c
+make && make install
+vim /usr/local/php/etc/php.ini
+extension="amqp.so"
+
+
+//配置定时任务
+* * * * * /root/crontab/getCoinList.sh
+* * * * * /root/crontab/getCoinReturn.sh
+*/5 * * * * php /home/wwwroot/tpToken/think CoinReturn
+
